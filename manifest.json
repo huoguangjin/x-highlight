@@ -1,0 +1,27 @@
+{
+  "name": "X-Highlight",
+  "version": "0.1.0",
+  "description": "double click and highlight text.",
+  "manifest_version": 2,
+  "icons": {
+    "16": "img/icon16.png",
+    "36": "img/icon36.png",
+    "72": "img/icon72.png"
+  },
+  "browser_action": {
+    "default_title": "X-Highlight",
+    "default_icon": "img/icon16.png",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "js": [
+        "js/main.js"
+      ]
+    }
+  ]
+}

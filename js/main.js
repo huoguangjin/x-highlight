@@ -87,108 +87,108 @@ class HighlightHandler {
       ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
   }
 
-  static resetNode(pNode) {
-    let prevNode = pNode.previousSibling;
-    let nextNode = pNode.nextSibling;
+  static resetNode(hlNode) {
+    let prevNode = hlNode.previousSibling;
+    let nextNode = hlNode.nextSibling;
 
     if (prevNode && nextNode) {
       if (prevNode.nodeType === Node.TEXT_NODE && nextNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergePrevNextText(pNode, prevNode, nextNode);
+        HighlightHandler.mergePrevNextText(hlNode, prevNode, nextNode);
       } else if (prevNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergePrevText(pNode, prevNode);
+        HighlightHandler.mergePrevText(hlNode, prevNode);
       } else if (nextNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergeNextText(pNode, nextNode);
+        HighlightHandler.mergeNextText(hlNode, nextNode);
       } else {
         // console.log('resetNode: prevNode && nextNode but neither == t3');
-        HighlightHandler.replaceHighlight(pNode);
+        HighlightHandler.replaceHighlight(hlNode);
       }
     } else if (prevNode) {
       if (prevNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergePrevText(pNode, prevNode);
+        HighlightHandler.mergePrevText(hlNode, prevNode);
       } else {
         // console.log('resetNode: prevNode && !nextNode but prevNode != t3');
-        HighlightHandler.replaceHighlight(pNode);
+        HighlightHandler.replaceHighlight(hlNode);
       }
     } else if (nextNode) {
       if (nextNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergeNextText(pNode, nextNode);
+        HighlightHandler.mergeNextText(hlNode, nextNode);
       } else {
         // console.log('resetNode: !prevNode && nextNode but nextNode != t3');
-        HighlightHandler.replaceHighlight(pNode);
+        HighlightHandler.replaceHighlight(hlNode);
       }
     } else {
       // console.log('resetNode: !prevNode && !nextNode');
-      HighlightHandler.replaceHighlight(pNode);
+      HighlightHandler.replaceHighlight(hlNode);
     }
   }
 
-  static mergePrevNextText(pNode, prevNode, nextNode) {
-    // console.log('mergePrevNextText', pNode, prevNode, nextNode);
-    prevNode.nodeValue = prevNode.nodeValue + pNode.innerText + nextNode.nodeValue;
+  static mergePrevNextText(hlNode, prevNode, nextNode) {
+    // console.log('mergePrevNextText', hlNode, prevNode, nextNode);
+    prevNode.nodeValue = prevNode.nodeValue + hlNode.innerText + nextNode.nodeValue;
     nextNode.remove();
-    pNode.remove();
+    hlNode.remove();
   }
 
-  static mergePrevText(pNode, prevNode) {
-    // console.log('mergePrevText', pNode, prevNode);
-    prevNode.nodeValue = prevNode.nodeValue + pNode.innerText;
-    pNode.remove();
+  static mergePrevText(hlNode, prevNode) {
+    // console.log('mergePrevText', hlNode, prevNode);
+    prevNode.nodeValue = prevNode.nodeValue + hlNode.innerText;
+    hlNode.remove();
   }
 
-  static mergeNextText(pNode, nextNode) {
-    // console.log('mergeNextText', pNode, nextNode);
-    nextNode.nodeValue = pNode.innerText + nextNode.nodeValue;
-    pNode.remove();
+  static mergeNextText(hlNode, nextNode) {
+    // console.log('mergeNextText', hlNode, nextNode);
+    nextNode.nodeValue = hlNode.innerText + nextNode.nodeValue;
+    hlNode.remove();
   }
 
-  static replaceHighlight(pNode) {
-    let original = document.createTextNode(pNode.innerText);
-    pNode.parentNode.replaceChild(original, pNode);
+  static replaceHighlight(hlNode) {
+    let original = document.createTextNode(hlNode.innerText);
+    hlNode.parentNode.replaceChild(original, hlNode);
     return original;
   }
 
-  static resetSelection(len, pNode) {
-    let prevNode = pNode.previousSibling;
-    let nextNode = pNode.nextSibling;
+  static resetSelection(len, hlNode) {
+    let prevNode = hlNode.previousSibling;
+    let nextNode = hlNode.nextSibling;
 
     if (prevNode && nextNode) {
       if (prevNode.nodeType === Node.TEXT_NODE && nextNode.nodeType === Node.TEXT_NODE) {
         let start = prevNode.length;
-        HighlightHandler.mergePrevNextText(pNode, prevNode, nextNode);
+        HighlightHandler.mergePrevNextText(hlNode, prevNode, nextNode);
         HighlightHandler.selectRange(prevNode, start, start + len);
       } else if (prevNode.nodeType === Node.TEXT_NODE) {
         let start = prevNode.length;
-        HighlightHandler.mergePrevText(pNode, prevNode);
+        HighlightHandler.mergePrevText(hlNode, prevNode);
         HighlightHandler.selectRange(prevNode, start, start + len);
       } else if (nextNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergeNextText(pNode, nextNode);
+        HighlightHandler.mergeNextText(hlNode, nextNode);
         HighlightHandler.selectRange(nextNode, 0, len);
       } else {
-        let original = HighlightHandler.replaceHighlight(pNode);
+        let original = HighlightHandler.replaceHighlight(hlNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else if (prevNode) {
       if (prevNode.nodeType === Node.TEXT_NODE) {
         let start = prevNode.length;
-        HighlightHandler.mergePrevText(pNode, prevNode);
+        HighlightHandler.mergePrevText(hlNode, prevNode);
         HighlightHandler.selectRange(prevNode, start, start + len);
       } else {
         // console.log('resetSelection: prevNode && !nextNode but prevNode != t3');
-        let original = HighlightHandler.replaceHighlight(pNode);
+        let original = HighlightHandler.replaceHighlight(hlNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else if (nextNode) {
       if (nextNode.nodeType === Node.TEXT_NODE) {
-        HighlightHandler.mergeNextText(pNode, nextNode);
+        HighlightHandler.mergeNextText(hlNode, nextNode);
         HighlightHandler.selectRange(nextNode, 0, len);
       } else {
         // console.log('resetSelection: !prevNode && nextNode but nextNode != t3');
-        let original = HighlightHandler.replaceHighlight(pNode);
+        let original = HighlightHandler.replaceHighlight(hlNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else {
       // console.log('resetSelection: !prevNode && !nextNode');
-      let original = HighlightHandler.replaceHighlight(pNode);
+      let original = HighlightHandler.replaceHighlight(hlNode);
       HighlightHandler.selectRange(original, 0, original.length);
     }
   }

@@ -87,7 +87,7 @@ class HighlightHandler {
       ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
   }
 
-  static resetNode(node, pNode) {
+  static resetNode(pNode) {
     let prevNode = pNode.previousSibling;
     let nextNode = pNode.nextSibling;
 
@@ -100,25 +100,25 @@ class HighlightHandler {
         HighlightHandler.mergeNextText(pNode, nextNode);
       } else {
         // console.log('resetNode: prevNode && nextNode but neither == t3');
-        HighlightHandler.replaceHighlight(node, pNode);
+        HighlightHandler.replaceHighlight(pNode);
       }
     } else if (prevNode) {
       if (prevNode.nodeType === Node.TEXT_NODE) {
         HighlightHandler.mergePrevText(pNode, prevNode);
       } else {
         // console.log('resetNode: prevNode && !nextNode but prevNode != t3');
-        HighlightHandler.replaceHighlight(node, pNode);
+        HighlightHandler.replaceHighlight(pNode);
       }
     } else if (nextNode) {
       if (nextNode.nodeType === Node.TEXT_NODE) {
         HighlightHandler.mergeNextText(pNode, nextNode);
       } else {
         // console.log('resetNode: !prevNode && nextNode but nextNode != t3');
-        HighlightHandler.replaceHighlight(node, pNode);
+        HighlightHandler.replaceHighlight(pNode);
       }
     } else {
       // console.log('resetNode: !prevNode && !nextNode');
-      HighlightHandler.replaceHighlight(node, pNode);
+      HighlightHandler.replaceHighlight(pNode);
     }
   }
 
@@ -141,15 +141,13 @@ class HighlightHandler {
     pNode.remove();
   }
 
-  static replaceHighlight(node, pNode) {
+  static replaceHighlight(pNode) {
     let original = document.createTextNode(pNode.innerText);
     pNode.parentNode.replaceChild(original, pNode);
-    node.remove(); // TODO: need remove after replaced?
     return original;
   }
 
-  static resetSelection(node, pNode) {
-    let len = node.nodeValue.length;
+  static resetSelection(len, pNode) {
     let prevNode = pNode.previousSibling;
     let nextNode = pNode.nextSibling;
 
@@ -166,7 +164,7 @@ class HighlightHandler {
         HighlightHandler.mergeNextText(pNode, nextNode);
         HighlightHandler.selectRange(nextNode, 0, len);
       } else {
-        let original = HighlightHandler.replaceHighlight(node, pNode);
+        let original = HighlightHandler.replaceHighlight(pNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else if (prevNode) {
@@ -176,7 +174,7 @@ class HighlightHandler {
         HighlightHandler.selectRange(prevNode, start, start + len);
       } else {
         // console.log('resetSelection: prevNode && !nextNode but prevNode != t3');
-        let original = HighlightHandler.replaceHighlight(node, pNode);
+        let original = HighlightHandler.replaceHighlight(pNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else if (nextNode) {
@@ -185,12 +183,12 @@ class HighlightHandler {
         HighlightHandler.selectRange(nextNode, 0, len);
       } else {
         // console.log('resetSelection: !prevNode && nextNode but nextNode != t3');
-        let original = HighlightHandler.replaceHighlight(node, pNode);
+        let original = HighlightHandler.replaceHighlight(pNode);
         HighlightHandler.selectRange(original, 0, original.length);
       }
     } else {
       // console.log('resetSelection: !prevNode && !nextNode');
-      let original = HighlightHandler.replaceHighlight(node, pNode);
+      let original = HighlightHandler.replaceHighlight(pNode);
       HighlightHandler.selectRange(original, 0, original.length);
     }
   }
@@ -217,14 +215,14 @@ class HighlightHandler {
          node = it.nextNode();) {
       let pNode = node.parentNode;
       if (pNode && pNode.classList.contains(HL_CLASS)
-        && node.textContent === this.keyword
+        && node.nodeValue === this.keyword
         && node !== this.anchorNode
       ) {
-        HighlightHandler.resetNode(node, pNode);
+        HighlightHandler.resetNode(pNode);
       }
     }
 
-    HighlightHandler.resetSelection(this.anchorNode, this.anchorNode.parentNode);
+    HighlightHandler.resetSelection(this.anchorNode.nodeValue.length, this.anchorNode.parentNode);
   }
 
   highlight(container) {

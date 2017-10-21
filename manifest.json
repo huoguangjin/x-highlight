@@ -20,7 +20,8 @@
       ],
       "all_frames": true,
       "js": [
-        "js/main.js"
+        "js/main.js",
+        "js/preview.js"
       ]
     }
   ]

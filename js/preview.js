@@ -5,6 +5,40 @@
 
 const PREVIEW_WIDTH = '15px';
 
+let stripe = document.createElement('canvas');
+stripe.style.width = PREVIEW_WIDTH;
+stripe.style.height = '100%';
+stripe.style.display = 'block';
+stripe.style.position = 'fixed';
+stripe.style.background = '#fff';
+stripe.style.borderLeft = "1px solid #ccc";
+stripe.zIndex = 1000;
+stripe.style.top = 0;
+stripe.style.bottom = 0;
+stripe.style.right = 0;
+document.body.appendChild(stripe);
+
+let stripeContext = stripe.getContext('2d');
+
+let updateStripe = (hlNodes) => {
+  let clientHeight = document.documentElement.clientHeight;
+  let pageHeight = document.documentElement.getBoundingClientRect().height;
+  let heightRatio = clientHeight / pageHeight;
+  let scrollY = window.scrollY;
+
+  stripe.height = clientHeight;
+  stripeContext.fillStyle = '#f0f';
+  let lastMarkY = 0;
+  hlNodes.forEach(n => {
+    let rect = n.getBoundingClientRect();
+    let markY = (((scrollY + rect.top) * heightRatio) + 0.5) | 0;
+    if (markY && markY !== lastMarkY) {
+      lastMarkY = markY;
+      stripeContext.fillRect(0, markY, stripe.width, (((rect.height * heightRatio) + 0.5) | 0) || 1);
+    }
+  });
+};
+
 let frame = document.createElement('canvas');
 frame.style.width = PREVIEW_WIDTH;
 frame.style.height = '100%';
@@ -48,7 +82,11 @@ let requestUpdate = () => {
 window.addEventListener('scroll', requestUpdate);
 window.addEventListener('resize', requestUpdate);
 
+// for test
 let clientHeight = document.documentElement.clientHeight;
 let pageHeight = document.documentElement.getBoundingClientRect().height;
 let heightRatio = clientHeight / pageHeight;
 console.log(clientHeight, pageHeight, heightRatio);
+
+const highlightNodes = document.getElementsByTagName('h4');
+updateStripe(Array.from(highlightNodes));

@@ -1,0 +1,36 @@
+{
+  "name": "x-highlight",
+  "version": "1.0.0",
+  "description": "double click and highlight text.",
+  "main": "index.html",
+  "keywords": [
+    "highlight",
+    "chrome",
+    "extension",
+    "x-highlight",
+    "xhighlight"
+  ],
+  "author": "HuoGuangjin",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/huoguangjin/x-highlight",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huoguangjin/x-highlight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/huoguangjin/x-highlight/issues"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --devtool eval --hot --inline --colors",
+    "build": "NODE_ENV=production webpack --env production -p --colors",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "webpack": "^3.8.1"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.3"
+  }
+}

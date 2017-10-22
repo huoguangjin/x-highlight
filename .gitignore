@@ -1,0 +1,22 @@
+# Generated files
+out
+build
+
+# Libraries
+node_modules
+
+# Log files
+*.log
+
+# Intellij
+.idea
+.iml
+.iws
+.ipr
+
+# System files
+thumbs.db
+.DS_Store
+
+# Keystore files
+*.pem

@@ -82,7 +82,7 @@ class HighlightHandler {
 
   static nodeFilter(node) {
     let pNode = node.parentNode;
-    let pTag = node.tagName;
+    let pTag = pNode.tagName;
     return (pNode && !pNode.classList.contains(HL_CLASS) && !(pTag === "SCRIPT" || pTag === "STYLE"))
       ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
   }

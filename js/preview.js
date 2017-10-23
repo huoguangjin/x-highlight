@@ -52,7 +52,10 @@ document.body.appendChild(frame);
 
 let frameContext = frame.getContext('2d');
 
+let updateFrameRequested = false;
 let updateFrame = () => {
+  updateFrameRequested = false;
+
   let clientHeight = document.documentElement.clientHeight;
   let pageHeight = document.documentElement.getBoundingClientRect().height;
   let heightRatio = clientHeight / pageHeight;
@@ -65,28 +68,16 @@ let updateFrame = () => {
   frameContext.strokeRect(1, frameTop, frame.width - 2, frameHeight);
 };
 
-let doUpdate = () => {
-  updateRequested = false;
-  updateFrame();
-  // TODO: 21/10/2017 update stripe
-};
-
-let updateRequested = false;
-let requestUpdate = () => {
-  if (!updateRequested) {
-    updateRequested = true;
-    requestAnimationFrame(doUpdate);
+const requestUpdateFrame = () => {
+  if (!updateFrameRequested) {
+    updateFrameRequested = true;
+    requestAnimationFrame(updateFrame);
   }
 };
 
-window.addEventListener('scroll', requestUpdate);
-window.addEventListener('resize', requestUpdate);
+window.addEventListener('scroll', requestUpdateFrame);
+window.addEventListener('resize', requestUpdateFrame);
 
-// for test
-let clientHeight = document.documentElement.clientHeight;
-let pageHeight = document.documentElement.getBoundingClientRect().height;
-let heightRatio = clientHeight / pageHeight;
-console.log(clientHeight, pageHeight, heightRatio);
-
-const highlightNodes = document.getElementsByTagName('h4');
-updateStripe(Array.from(highlightNodes));
+export {
+  updateStripe
+}

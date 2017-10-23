@@ -3,6 +3,8 @@
  */
 "use strict";
 
+import { updateStripe } from './preview.js'
+
 const HL_CLASS = 'X_HIGHLIGHTED';
 const HL_STYLE = `${HL_CLASS} ${HL_CLASS}_`;
 
@@ -68,8 +70,24 @@ document.body.addEventListener('dblclick', () => {
 
   let hh = new HighlightHandler(selectedText, selection.anchorNode, range.startOffset, (color++) % HL_LIST.length);
   hh.toggle();
-  // TODO: 20/10/2017 update scroll bar
+  // for test
+  updateStripe(hh.highlightedNodes);
 });
+
+let updateStripeRequested = false;
+const doUpdateStripe = () => {
+  updateStripeRequested = false;
+  // TODO: 23/10/2017 update stripes
+};
+
+const requestUpdateStripe = () => {
+  if (!updateStripeRequested) {
+    updateStripeRequested = true;
+    requestAnimationFrame(doUpdateStripe);
+  }
+};
+
+window.addEventListener('resize', requestUpdateStripe);
 
 class HighlightHandler {
   constructor(keyword, anchorNode, anchorOffset, colorIndex) {

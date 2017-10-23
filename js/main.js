@@ -48,6 +48,8 @@ HL_LIST.forEach(({ fg, bg }, idx) => {
 css.innerHTML = cssText;
 document.body.appendChild(css);
 
+const keyword2Handler = new Map();
+
 document.body.addEventListener('dblclick', () => {
   let selection = window.getSelection();
   let rangeCount = selection.rangeCount;
@@ -68,16 +70,30 @@ document.body.addEventListener('dblclick', () => {
     return;
   }
 
-  let hh = new HighlightHandler(selectedText, selection.anchorNode, range.startOffset, (color++) % HL_LIST.length);
-  hh.toggle();
-  // for test
-  updateStripe(hh.highlightedNodes);
+  let anchorNode = selection.anchorNode;
+  let handler = keyword2Handler.get(selectedText);
+  if (handler) {
+    keyword2Handler.delete(selectedText);
+    let hlNode = anchorNode.parentNode;
+    handler.highlightedNodes.forEach((n) => {
+      if (hlNode !== n && n) {
+        HighlightHandler.resetNode(n);
+      }
+    });
+    HighlightHandler.resetSelection(selectedText.length, hlNode);
+  } else {
+    let hh = new HighlightHandler(selectedText, anchorNode, range.startOffset, (color++) % HL_LIST.length);
+    hh.highlight(document.body);
+    keyword2Handler.set(selectedText, hh);
+  }
+
+  requestUpdateStripe();
 });
 
 let updateStripeRequested = false;
 const doUpdateStripe = () => {
   updateStripeRequested = false;
-  // TODO: 23/10/2017 update stripes
+  updateStripe(keyword2Handler.values());
 };
 
 const requestUpdateStripe = () => {
@@ -94,6 +110,7 @@ class HighlightHandler {
     this.keyword = keyword;
     this.anchorNode = anchorNode;
     this.anchorOffset = anchorOffset;
+    this.color = HL_LIST[colorIndex].bg;
     this.className = `${HL_STYLE}${colorIndex}`;
     this.highlightedNodes = [];
   }
@@ -218,29 +235,6 @@ class HighlightHandler {
     let selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-  }
-
-  toggle() {
-    if (!this.anchorNode.parentNode.classList.contains(HL_CLASS)) {
-      this.highlight(document.body);
-    } else {
-      this.reset(document.body);
-    }
-  }
-
-  reset(container) {
-    for (let node, it = document.createNodeIterator(container, NodeFilter.SHOW_TEXT, NodeFilter.FILTER_ACCEPT, false);
-         node = it.nextNode();) {
-      let pNode = node.parentNode;
-      if (pNode && pNode.classList.contains(HL_CLASS)
-        && node.nodeValue === this.keyword
-        && node !== this.anchorNode
-      ) {
-        HighlightHandler.resetNode(pNode);
-      }
-    }
-
-    HighlightHandler.resetSelection(this.anchorNode.nodeValue.length, this.anchorNode.parentNode);
   }
 
   highlight(container) {

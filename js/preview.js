@@ -20,23 +20,25 @@ document.body.appendChild(stripe);
 
 let stripeContext = stripe.getContext('2d');
 
-let updateStripe = (hlNodes) => {
+let updateStripe = (handlers) => {
   let clientHeight = document.documentElement.clientHeight;
   let pageHeight = document.documentElement.getBoundingClientRect().height;
   let heightRatio = clientHeight / pageHeight;
   let scrollY = window.scrollY;
 
   stripe.height = clientHeight;
-  stripeContext.fillStyle = '#f0f';
-  let lastMarkY = 0;
-  hlNodes.forEach(n => {
-    let rect = n.getBoundingClientRect();
-    let markY = (((scrollY + rect.top) * heightRatio) + 0.5) | 0;
-    if (markY && markY !== lastMarkY) {
-      lastMarkY = markY;
-      stripeContext.fillRect(0, markY, stripe.width, (((rect.height * heightRatio) + 0.5) | 0) || 1);
-    }
-  });
+  for (let { highlightedNodes, color } of handlers) {
+    let lastMarkY = 0;
+    stripeContext.fillStyle = color;
+    highlightedNodes.forEach((n) => {
+      let rect = n.getBoundingClientRect();
+      let markY = (((scrollY + rect.top) * heightRatio) + 0.5) | 0;
+      if (markY && markY !== lastMarkY) {
+        lastMarkY = markY;
+        stripeContext.fillRect(0, markY, stripe.width, (((rect.height * heightRatio) + 0.5) | 0) || 1);
+      }
+    });
+  }
 };
 
 let frame = document.createElement('canvas');

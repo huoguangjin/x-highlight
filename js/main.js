@@ -270,7 +270,7 @@ class HighlightHandler {
       last = curr + len;
       const hlNode = document.createElement('span');
       hlNode.className = this.className;
-      hlNode.innerHTML = content.slice(curr, last);
+      hlNode.innerText = content.slice(curr, last);
       fragment.appendChild(hlNode);
       this.highlightedNodes.push(hlNode);
 
@@ -307,7 +307,7 @@ class HighlightHandler {
         last = curr + len;
         let hlNode = document.createElement('span');
         hlNode.className = this.className;
-        hlNode.innerHTML = content.slice(curr, last);
+        hlNode.innerText = content.slice(curr, last);
         fragment.appendChild(hlNode);
         this.highlightedNodes.push(hlNode);
 
@@ -321,7 +321,7 @@ class HighlightHandler {
 
       selectedNode = document.createElement('span');
       selectedNode.className = this.className;
-      selectedNode.innerHTML = content.slice(this.anchorOffset, this.anchorOffset + len);
+      selectedNode.innerText = content.slice(this.anchorOffset, this.anchorOffset + len);
       fragment.appendChild(selectedNode);
       this.highlightedNodes.push(selectedNode);
 
@@ -329,7 +329,7 @@ class HighlightHandler {
     } else {
       selectedNode = document.createElement('span');
       selectedNode.className = this.className;
-      selectedNode.innerHTML = content.slice(0, len);
+      selectedNode.innerText = content.slice(0, len);
       fragment.appendChild(selectedNode);
       this.highlightedNodes.push(selectedNode);
 
@@ -350,7 +350,7 @@ class HighlightHandler {
       last = curr + len;
       let hlNode = document.createElement('span');
       hlNode.className = this.className;
-      hlNode.innerHTML = content.slice(curr, last);
+      hlNode.innerText = content.slice(curr, last);
       fragment.appendChild(hlNode);
       this.highlightedNodes.push(hlNode);
 

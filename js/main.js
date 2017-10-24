@@ -238,27 +238,21 @@ class HighlightHandler {
   }
 
   highlight(container) {
-    let batch = [];
     for (let node, it = document.createNodeIterator(container, NodeFilter.SHOW_TEXT, HighlightHandler.nodeFilter, false);
          node = it.nextNode();) {
-      if (node === this.anchorNode) {
-        continue;
-      }
-      let action = this.highlightNode(node);
-      if (action) {
-        batch.push(action);
+      if (node !== this.anchorNode) {
+        this.highlightNode(node);
       }
     }
 
     this.highlightSelection();
-    batch.forEach(e => e());
   }
 
   highlightNode(node) {
-    let len = this.keyword.length;
-    let content = node.nodeValue;
+    const len = this.keyword.length;
+    const content = node.nodeValue;
 
-    let fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
 
     let curr = 0;
     let last = 0;
@@ -269,12 +263,12 @@ class HighlightHandler {
       }
 
       if (curr !== 0) {
-        let prevNode = document.createTextNode(content.slice(last, curr));
+        const prevNode = document.createTextNode(content.slice(last, curr));
         fragment.appendChild(prevNode);
       }
 
       last = curr + len;
-      let hlNode = document.createElement('span');
+      const hlNode = document.createElement('span');
       hlNode.className = this.className;
       hlNode.innerHTML = content.slice(curr, last);
       fragment.appendChild(hlNode);
@@ -283,12 +277,8 @@ class HighlightHandler {
       curr = last;
     }
 
-    if (last === 0) {
-      return null; // keyword not found..
-    }
-
-    fragment.appendChild(document.createTextNode(content.slice(last)));
-    return function () {
+    if (last !== 0) {
+      fragment.appendChild(document.createTextNode(content.slice(last)));
       node.parentNode.replaceChild(fragment, node);
     }
   }

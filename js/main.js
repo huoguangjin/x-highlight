@@ -9,30 +9,30 @@ const HL_CLASS = 'X_HIGHLIGHTED';
 const HL_STYLE = `${HL_CLASS} ${HL_CLASS}_`;
 
 const HL_LIST = [
-  { 'fg': '#fff', 'bg': '#ff0000' },
-  { 'fg': '#fff', 'bg': '#ff649f' },
-  { 'fg': '#fff', 'bg': '#e040fb' },
-  { 'fg': '#fff', 'bg': '#b388ff' },
-  { 'fg': '#fff', 'bg': '#3f51b5' },
-  { 'fg': '#fff', 'bg': '#1976d2' },
-  { 'fg': '#000', 'bg': '#81d4fa' },
-  { 'fg': '#000', 'bg': '#00b8d4' },
-  { 'fg': '#000', 'bg': '#64ffda' },
-  { 'fg': '#000', 'bg': '#4caf50' },
-  { 'fg': '#000', 'bg': '#76ff03' },
-  { 'fg': '#000', 'bg': '#cddc39' },
-  { 'fg': '#000', 'bg': '#ffff00' },
-  { 'fg': '#000', 'bg': '#ffca28' },
-  { 'fg': '#fff', 'bg': '#ff6d00' },
-  { 'fg': '#fff', 'bg': '#d84315' },
-  { 'fg': '#fff', 'bg': '#795548' },
-  { 'fg': '#fff', 'bg': '#9e9e9e' },
-  { 'fg': '#fff', 'bg': '#607d8b' },
+  { fg: '#fff', bg: '#ff0000' },
+  { fg: '#fff', bg: '#ff649f' },
+  { fg: '#fff', bg: '#e040fb' },
+  { fg: '#fff', bg: '#b388ff' },
+  { fg: '#fff', bg: '#3f51b5' },
+  { fg: '#fff', bg: '#1976d2' },
+  { fg: '#000', bg: '#81d4fa' },
+  { fg: '#000', bg: '#00b8d4' },
+  { fg: '#000', bg: '#64ffda' },
+  { fg: '#000', bg: '#4caf50' },
+  { fg: '#000', bg: '#76ff03' },
+  { fg: '#000', bg: '#cddc39' },
+  { fg: '#000', bg: '#ffff00' },
+  { fg: '#000', bg: '#ffca28' },
+  { fg: '#fff', bg: '#ff6d00' },
+  { fg: '#fff', bg: '#d84315' },
+  { fg: '#fff', bg: '#795548' },
+  { fg: '#fff', bg: '#9e9e9e' },
+  { fg: '#fff', bg: '#607d8b' },
 ];
 
 let color = 0;
 
-let css = document.createElement('style');
+const css = document.createElement('style');
 css.type = 'text/css';
 let cssText = `.${HL_CLASS} {`
   + 'font-style:normal;'
@@ -118,7 +118,7 @@ class HighlightHandler {
   static nodeFilter(node) {
     let pNode = node.parentNode;
     let pTag = pNode.tagName;
-    return (pNode && !pNode.classList.contains(HL_CLASS) && !(pTag === "SCRIPT" || pTag === "STYLE"))
+    return (pNode && !pNode.classList.contains(HL_CLASS) && !(pTag === 'SCRIPT' || pTag === 'STYLE'))
       ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
   }
 
@@ -274,7 +274,7 @@ class HighlightHandler {
       }
 
       last = curr + len;
-      let hlNode = document.createElement("span");
+      let hlNode = document.createElement('span');
       hlNode.className = this.className;
       hlNode.innerHTML = content.slice(curr, last);
       fragment.appendChild(hlNode);
@@ -315,7 +315,7 @@ class HighlightHandler {
         }
 
         last = curr + len;
-        let hlNode = document.createElement("span");
+        let hlNode = document.createElement('span');
         hlNode.className = this.className;
         hlNode.innerHTML = content.slice(curr, last);
         fragment.appendChild(hlNode);
@@ -329,7 +329,7 @@ class HighlightHandler {
         fragment.appendChild(prevNode);
       }
 
-      selectedNode = document.createElement("span");
+      selectedNode = document.createElement('span');
       selectedNode.className = this.className;
       selectedNode.innerHTML = content.slice(this.anchorOffset, this.anchorOffset + len);
       fragment.appendChild(selectedNode);
@@ -337,7 +337,7 @@ class HighlightHandler {
 
       curr = last = this.anchorOffset + len;
     } else {
-      selectedNode = document.createElement("span");
+      selectedNode = document.createElement('span');
       selectedNode.className = this.className;
       selectedNode.innerHTML = content.slice(0, len);
       fragment.appendChild(selectedNode);
@@ -358,7 +358,7 @@ class HighlightHandler {
       }
 
       last = curr + len;
-      let hlNode = document.createElement("span");
+      let hlNode = document.createElement('span');
       hlNode.className = this.className;
       hlNode.innerHTML = content.slice(curr, last);
       fragment.appendChild(hlNode);

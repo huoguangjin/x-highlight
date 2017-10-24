@@ -5,22 +5,22 @@
 
 const PREVIEW_WIDTH = '15px';
 
-let stripe = document.createElement('canvas');
+const stripe = document.createElement('canvas');
 stripe.style.width = PREVIEW_WIDTH;
 stripe.style.height = '100%';
 stripe.style.display = 'block';
 stripe.style.position = 'fixed';
 stripe.style.background = '#fff';
-stripe.style.borderLeft = "1px solid #ccc";
+stripe.style.borderLeft = '1px solid #ccc';
 stripe.zIndex = 1000;
 stripe.style.top = 0;
 stripe.style.bottom = 0;
 stripe.style.right = 0;
 document.body.appendChild(stripe);
 
-let stripeContext = stripe.getContext('2d');
+const stripeContext = stripe.getContext('2d');
 
-let updateStripe = (handlers) => {
+const updateStripe = (handlers) => {
   let clientHeight = document.documentElement.clientHeight;
   let pageHeight = document.documentElement.getBoundingClientRect().height;
   let heightRatio = clientHeight / pageHeight;
@@ -41,7 +41,7 @@ let updateStripe = (handlers) => {
   }
 };
 
-let frame = document.createElement('canvas');
+const frame = document.createElement('canvas');
 frame.style.width = PREVIEW_WIDTH;
 frame.style.height = '100%';
 frame.style.display = 'block';
@@ -52,10 +52,10 @@ frame.style.bottom = 0;
 frame.style.right = 0;
 document.body.appendChild(frame);
 
-let frameContext = frame.getContext('2d');
+const frameContext = frame.getContext('2d');
 
 let updateFrameRequested = false;
-let updateFrame = () => {
+const updateFrame = () => {
   updateFrameRequested = false;
 
   let clientHeight = document.documentElement.clientHeight;

@@ -238,14 +238,26 @@ class HighlightHandler {
   }
 
   highlight(container) {
+    const node = this.anchorNode;
+    const selectedNode = node.splitText(this.anchorOffset);
+    selectedNode.splitText(this.keyword.length);
+
+    const hlNode = document.createElement('span');
+    hlNode.className = this.className;
+    hlNode.innerText = selectedNode.nodeValue;
+    selectedNode.parentNode.replaceChild(hlNode, selectedNode);
+    this.highlightedNodes.push(hlNode);
+
+    const range = document.createRange();
+    range.selectNodeContents(hlNode);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
     for (let node, it = document.createNodeIterator(container, NodeFilter.SHOW_TEXT, HighlightHandler.nodeFilter, false);
          node = it.nextNode();) {
-      if (node !== this.anchorNode) {
-        this.highlightNode(node);
-      }
+      this.highlightNode(node);
     }
-
-    this.highlightSelection();
   }
 
   highlightNode(node) {
@@ -280,94 +292,6 @@ class HighlightHandler {
     if (last !== 0) {
       fragment.appendChild(document.createTextNode(content.slice(last)));
       node.parentNode.replaceChild(fragment, node);
-    }
-  }
-
-  highlightSelection() {
-    let len = this.keyword.length;
-    let content = this.anchorNode.nodeValue;
-    let fragment = document.createDocumentFragment();
-
-    let selectedNode; // the node with selected text
-    let curr = 0;
-    let last = 0;
-    if (this.anchorOffset) {
-      while (curr + len <= this.anchorOffset) {
-        curr = content.indexOf(this.keyword, curr);
-        if (curr === this.anchorOffset) {
-          curr = last;
-          break; // reach selection
-        }
-
-        if (curr !== 0) {
-          let prevNode = document.createTextNode(content.slice(last, curr));
-          fragment.appendChild(prevNode);
-        }
-
-        last = curr + len;
-        let hlNode = document.createElement('span');
-        hlNode.className = this.className;
-        hlNode.innerText = content.slice(curr, last);
-        fragment.appendChild(hlNode);
-        this.highlightedNodes.push(hlNode);
-
-        curr = last;
-      }
-
-      if (curr < this.anchorOffset) {
-        let prevNode = document.createTextNode(content.slice(curr, this.anchorOffset));
-        fragment.appendChild(prevNode);
-      }
-
-      selectedNode = document.createElement('span');
-      selectedNode.className = this.className;
-      selectedNode.innerText = content.slice(this.anchorOffset, this.anchorOffset + len);
-      fragment.appendChild(selectedNode);
-      this.highlightedNodes.push(selectedNode);
-
-      curr = last = this.anchorOffset + len;
-    } else {
-      selectedNode = document.createElement('span');
-      selectedNode.className = this.className;
-      selectedNode.innerText = content.slice(0, len);
-      fragment.appendChild(selectedNode);
-      this.highlightedNodes.push(selectedNode);
-
-      curr = last = len;
-    }
-
-    while (curr + len <= content.length) {
-      curr = content.indexOf(this.keyword, curr);
-      if (curr === -1) {
-        break; // no more match..
-      }
-
-      if (curr !== this.anchorOffset + len) {
-        let prevNode = document.createTextNode(content.slice(last, curr));
-        fragment.appendChild(prevNode);
-      }
-
-      last = curr + len;
-      let hlNode = document.createElement('span');
-      hlNode.className = this.className;
-      hlNode.innerText = content.slice(curr, last);
-      fragment.appendChild(hlNode);
-      this.highlightedNodes.push(hlNode);
-
-      curr = last;
-    }
-
-    fragment.appendChild(document.createTextNode(content.slice(last)));
-    this.anchorNode.parentNode.replaceChild(fragment, this.anchorNode);
-
-    if (selectedNode) {
-      let range = document.createRange();
-      range.selectNodeContents(selectedNode);
-      let selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else {
-      console.log('highlightSelection: without selectedNode');
     }
   }
 }

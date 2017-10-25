@@ -82,9 +82,10 @@ document.body.addEventListener('dblclick', () => {
     });
     HighlightHandler.resetSelection(selectedText.length, hlNode);
   } else {
-    let hh = new HighlightHandler(selectedText, anchorNode, range.startOffset, (color++) % HL_LIST.length);
-    hh.highlight(document.body);
-    keyword2Handler.set(selectedText, hh);
+    const colorIndex = (color++) % HL_LIST.length;
+    const className = `${HL_STYLE}${colorIndex}`;
+    const hlNodes = HighlightHandler.highlight(document.body, anchorNode, range.startOffset, selectedText, className);
+    keyword2Handler.set(selectedText, { color: HL_LIST[colorIndex].bg, highlightedNodes: hlNodes });
   }
 
   requestUpdateStripe();
@@ -237,16 +238,17 @@ class HighlightHandler {
     selection.addRange(range);
   }
 
-  highlight(container) {
-    const node = this.anchorNode;
-    const selectedNode = node.splitText(this.anchorOffset);
-    selectedNode.splitText(this.keyword.length);
+  static highlight(container, anchorNode, anchorOffset, keyword, className) {
+    const highlightedNodes = [];
+
+    const selectedNode = anchorNode.splitText(anchorOffset);
+    selectedNode.splitText(keyword.length);
 
     const hlNode = document.createElement('span');
-    hlNode.className = this.className;
+    hlNode.className = className;
     hlNode.innerText = selectedNode.nodeValue;
     selectedNode.parentNode.replaceChild(hlNode, selectedNode);
-    this.highlightedNodes.push(hlNode);
+    highlightedNodes.push(hlNode);
 
     const range = document.createRange();
     range.selectNodeContents(hlNode);
@@ -256,20 +258,23 @@ class HighlightHandler {
 
     for (let node, it = document.createNodeIterator(container, NodeFilter.SHOW_TEXT, HighlightHandler.nodeFilter, false);
          node = it.nextNode();) {
-      this.highlightNode(node);
+      HighlightHandler.highlightNode(node, keyword, className, highlightedNodes);
     }
+
+    return highlightedNodes;
   }
 
-  highlightNode(node) {
-    const len = this.keyword.length;
+  static highlightNode(node, keyword, className, highlightedNodes) {
+    const len = keyword.length;
     const content = node.nodeValue;
+    const contentLen = content.length;
 
     const fragment = document.createDocumentFragment();
 
     let curr = 0;
     let last = 0;
-    while (curr + len <= content.length) {
-      curr = content.indexOf(this.keyword, curr);
+    while (curr + len <= contentLen) {
+      curr = content.indexOf(keyword, curr);
       if (curr === -1) {
         break; // no more match..
       }
@@ -281,10 +286,10 @@ class HighlightHandler {
 
       last = curr + len;
       const hlNode = document.createElement('span');
-      hlNode.className = this.className;
+      hlNode.className = className;
       hlNode.innerText = content.slice(curr, last);
       fragment.appendChild(hlNode);
-      this.highlightedNodes.push(hlNode);
+      highlightedNodes.push(hlNode);
 
       curr = last;
     }

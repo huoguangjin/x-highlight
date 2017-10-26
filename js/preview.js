@@ -12,7 +12,7 @@ stripe.style.display = 'block';
 stripe.style.position = 'fixed';
 stripe.style.background = '#fff';
 stripe.style.borderLeft = '1px solid #ccc';
-stripe.zIndex = 1000;
+stripe.style.zIndex = 10000;
 stripe.style.top = 0;
 stripe.style.bottom = 0;
 stripe.style.right = 0;
@@ -46,7 +46,7 @@ frame.style.width = PREVIEW_WIDTH;
 frame.style.height = '100%';
 frame.style.display = 'block';
 frame.style.position = 'fixed';
-frame.zIndex = 1000;
+frame.style.zIndex = 10000;
 frame.style.top = 0;
 frame.style.bottom = 0;
 frame.style.right = 0;
@@ -66,8 +66,9 @@ const updateFrame = () => {
   const frameHeight = ((clientHeight * heightRatio) + 0.5) | 0;
 
   frame.height = clientHeight;
-  frameContext.strokeStyle = '#0ff';
-  frameContext.strokeRect(1, frameTop, frame.width - 2, frameHeight);
+  frameContext.globalAlpha = 0.75;
+  frameContext.fillStyle = '#ccc';
+  frameContext.fillRect(1, frameTop, frame.width - 2, frameHeight);
 };
 
 const requestUpdateFrame = () => {

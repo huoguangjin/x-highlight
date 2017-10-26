@@ -4,6 +4,9 @@
 "use strict";
 
 const PREVIEW_WIDTH = '15px';
+const FADE_OUT_DELAY = 3000;
+const FADE_OUT_STEP = 0.05;
+const FADE_OUT_INTERVAL = 1 / FADE_OUT_STEP;
 
 const stripe = document.createElement('canvas');
 stripe.style.width = PREVIEW_WIDTH;
@@ -16,6 +19,7 @@ stripe.style.zIndex = 10000;
 stripe.style.top = 0;
 stripe.style.bottom = 0;
 stripe.style.right = 0;
+stripe.style.opacity = 1.0;
 document.body.appendChild(stripe);
 
 const stripeContext = stripe.getContext('2d');
@@ -39,6 +43,8 @@ const updateStripe = (hlInfos) => {
       }
     });
   }
+
+  fadeOut();
 };
 
 const frame = document.createElement('canvas');
@@ -50,6 +56,7 @@ frame.style.zIndex = 10000;
 frame.style.top = 0;
 frame.style.bottom = 0;
 frame.style.right = 0;
+frame.style.opacity = 1.0;
 document.body.appendChild(frame);
 
 const frameContext = frame.getContext('2d');
@@ -69,6 +76,8 @@ const updateFrame = () => {
   frameContext.globalAlpha = 0.75;
   frameContext.fillStyle = '#ccc';
   frameContext.fillRect(1, frameTop, frame.width - 2, frameHeight);
+
+  fadeOut();
 };
 
 const requestUpdateFrame = () => {
@@ -80,6 +89,39 @@ const requestUpdateFrame = () => {
 
 window.addEventListener('scroll', requestUpdateFrame);
 window.addEventListener('resize', requestUpdateFrame);
+
+let fadeOutEvent = null;
+let fadeOutAnimation = null;
+const fadeOut = () => {
+  stripe.style.opacity = 1.0;
+  frame.style.opacity = 1.0;
+
+  if (fadeOutEvent) {
+    clearTimeout(fadeOutEvent);
+    fadeOutEvent = null;
+  }
+  if (fadeOutAnimation) {
+    clearInterval(fadeOutAnimation);
+    fadeOutAnimation = null;
+  }
+
+  fadeOutEvent = setTimeout(() => {
+    fadeOutEvent = null;
+
+    let opacity = stripe.style.opacity;
+    fadeOutAnimation = setInterval(() => {
+      if (opacity >= FADE_OUT_STEP) {
+        opacity -= FADE_OUT_STEP;
+        stripe.style.opacity = opacity;
+        frame.style.opacity = opacity;
+      } else {
+        stripe.style.opacity = 0;
+        frame.style.opacity = 0;
+        clearInterval(fadeOutAnimation);
+      }
+    }, FADE_OUT_INTERVAL);
+  }, FADE_OUT_DELAY);
+};
 
 export {
   updateStripe

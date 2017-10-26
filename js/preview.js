@@ -20,19 +20,19 @@ document.body.appendChild(stripe);
 
 const stripeContext = stripe.getContext('2d');
 
-const updateStripe = (handlers) => {
-  let clientHeight = document.documentElement.clientHeight;
-  let pageHeight = document.documentElement.getBoundingClientRect().height;
-  let heightRatio = clientHeight / pageHeight;
-  let scrollY = window.scrollY;
+const updateStripe = (hlInfos) => {
+  const clientHeight = document.documentElement.clientHeight;
+  const pageHeight = document.documentElement.getBoundingClientRect().height;
+  const heightRatio = clientHeight / pageHeight;
+  const scrollY = window.scrollY;
 
   stripe.height = clientHeight;
-  for (let { highlightedNodes, color } of handlers) {
+  for (const { color, hlNodes } of hlInfos) {
     let lastMarkY = 0;
     stripeContext.fillStyle = color;
-    highlightedNodes.forEach((n) => {
-      let rect = n.getBoundingClientRect();
-      let markY = (((scrollY + rect.top) * heightRatio) + 0.5) | 0;
+    hlNodes.forEach((n) => {
+      const rect = n.getBoundingClientRect();
+      const markY = (((scrollY + rect.top) * heightRatio) + 0.5) | 0;
       if (markY && markY !== lastMarkY) {
         lastMarkY = markY;
         stripeContext.fillRect(0, markY, stripe.width, (((rect.height * heightRatio) + 0.5) | 0) || 1);
@@ -58,12 +58,12 @@ let updateFrameRequested = false;
 const updateFrame = () => {
   updateFrameRequested = false;
 
-  let clientHeight = document.documentElement.clientHeight;
-  let pageHeight = document.documentElement.getBoundingClientRect().height;
-  let heightRatio = clientHeight / pageHeight;
+  const clientHeight = document.documentElement.clientHeight;
+  const pageHeight = document.documentElement.getBoundingClientRect().height;
+  const heightRatio = clientHeight / pageHeight;
 
-  let frameTop = ((window.scrollY * heightRatio) + 0.5) | 0;
-  let frameHeight = ((clientHeight * heightRatio) + 0.5) | 0;
+  const frameTop = ((window.scrollY * heightRatio) + 0.5) | 0;
+  const frameHeight = ((clientHeight * heightRatio) + 0.5) | 0;
 
   frame.height = clientHeight;
   frameContext.strokeStyle = '#0ff';
@@ -82,4 +82,4 @@ window.addEventListener('resize', requestUpdateFrame);
 
 export {
   updateStripe
-}
+};

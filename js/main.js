@@ -46,7 +46,7 @@ HL_LIST.forEach(({ fg, bg }, idx) => {
 css.innerHTML = cssText;
 document.body.appendChild(css);
 
-const keyword2Handler = new Map();
+const keyword2hlInfo = new Map();
 
 document.body.addEventListener('dblclick', () => {
   let selection = window.getSelection();
@@ -69,11 +69,11 @@ document.body.addEventListener('dblclick', () => {
   }
 
   let anchorNode = selection.anchorNode;
-  let handler = keyword2Handler.get(selectedText);
-  if (handler) {
-    keyword2Handler.delete(selectedText);
+  let hlInfo = keyword2hlInfo.get(selectedText);
+  if (hlInfo) {
+    keyword2hlInfo.delete(selectedText);
     let hlNode = anchorNode.parentNode;
-    handler.highlightedNodes.forEach((n) => {
+    hlInfo.hlNodes.forEach((n) => {
       if (hlNode !== n && n) {
         resetNode(n);
       }
@@ -83,7 +83,7 @@ document.body.addEventListener('dblclick', () => {
     const colorIndex = (color++) % HL_LIST.length;
     const className = `${HL_CLASS} ${HL_CLASS}_${colorIndex}`;
     const hlNodes = highlight(document.body, anchorNode, range.startOffset, selectedText, className);
-    keyword2Handler.set(selectedText, { color: HL_LIST[colorIndex].bg, highlightedNodes: hlNodes });
+    keyword2hlInfo.set(selectedText, { color: HL_LIST[colorIndex].bg, hlNodes });
   }
 
   requestUpdateStripe();
@@ -92,7 +92,7 @@ document.body.addEventListener('dblclick', () => {
 let updateStripeRequested = false;
 const doUpdateStripe = () => {
   updateStripeRequested = false;
-  updateStripe(keyword2Handler.values());
+  updateStripe(keyword2hlInfo.values());
 };
 
 const requestUpdateStripe = () => {

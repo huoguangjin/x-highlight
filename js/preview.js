@@ -19,7 +19,7 @@ stripe.style.zIndex = 10000;
 stripe.style.top = 0;
 stripe.style.bottom = 0;
 stripe.style.right = 0;
-stripe.style.opacity = 1.0;
+stripe.style.opacity = 0.0;
 document.body.appendChild(stripe);
 
 const stripeContext = stripe.getContext('2d');
@@ -44,7 +44,7 @@ const updateStripe = (hlInfos) => {
     });
   }
 
-  fadeOut();
+  fadeOutAction.requestFadeOut();
 };
 
 const frame = document.createElement('canvas');
@@ -56,7 +56,7 @@ frame.style.zIndex = 10000;
 frame.style.top = 0;
 frame.style.bottom = 0;
 frame.style.right = 0;
-frame.style.opacity = 1.0;
+frame.style.opacity = 0.0;
 document.body.appendChild(frame);
 
 const frameContext = frame.getContext('2d');
@@ -77,7 +77,7 @@ const updateFrame = () => {
   frameContext.fillStyle = '#ccc';
   frameContext.fillRect(1, frameTop, frame.width - 2, frameHeight);
 
-  fadeOut();
+  fadeOutAction.requestFadeOut();
 };
 
 const requestUpdateFrame = () => {
@@ -90,26 +90,34 @@ const requestUpdateFrame = () => {
 window.addEventListener('scroll', requestUpdateFrame);
 window.addEventListener('resize', requestUpdateFrame);
 
-let fadeOutEvent = null;
-let fadeOutAnimation = null;
-const fadeOut = () => {
-  stripe.style.opacity = 1.0;
-  frame.style.opacity = 1.0;
+const fadeOutAction = {
+  requestFadeOutRequested: false,
+  fadeOutAnimation: 0,
+  fadeOutEvent: 0,
 
-  if (fadeOutEvent) {
-    clearTimeout(fadeOutEvent);
-    fadeOutEvent = null;
-  }
-  if (fadeOutAnimation) {
-    clearInterval(fadeOutAnimation);
-    fadeOutAnimation = null;
-  }
+  requestFadeOut: function () {
+    if (!this.requestFadeOutRequested) {
+      this.requestFadeOutRequested = true;
 
-  fadeOutEvent = setTimeout(() => {
-    fadeOutEvent = null;
+      stripe.style.opacity = 1.0;
+      frame.style.opacity = 1.0;
+
+      requestAnimationFrame(this.start.bind(this));
+    }
+  },
+
+  start: function () {
+    this.requestFadeOutRequested = false;
+    this.cancel();
+    this.fadeOutEvent = setTimeout(this.doFadeOut, FADE_OUT_DELAY);
+  },
+
+  doFadeOut: function () {
+    this.fadeOutEvent = null;
 
     let opacity = stripe.style.opacity;
-    fadeOutAnimation = setInterval(() => {
+    this.fadeOutAnimation = null;
+    this.fadeOutAnimation = setInterval(() => {
       if (opacity >= FADE_OUT_STEP) {
         opacity -= FADE_OUT_STEP;
         stripe.style.opacity = opacity;
@@ -117,10 +125,21 @@ const fadeOut = () => {
       } else {
         stripe.style.opacity = 0;
         frame.style.opacity = 0;
-        clearInterval(fadeOutAnimation);
+        clearInterval(this.fadeOutAnimation);
       }
     }, FADE_OUT_INTERVAL);
-  }, FADE_OUT_DELAY);
+  },
+
+  cancel: function () {
+    if (this.fadeOutEvent) {
+      clearTimeout(this.fadeOutEvent);
+      this.fadeOutEvent = 0;
+    }
+    if (this.fadeOutAnimation) {
+      clearInterval(this.fadeOutAnimation);
+      this.fadeOutAnimation = 0;
+    }
+  }
 };
 
 export {

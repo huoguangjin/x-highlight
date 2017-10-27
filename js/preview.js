@@ -27,7 +27,7 @@ const stripeContext = stripe.getContext('2d');
 
 const updateStripe = (hlInfos) => {
   const clientHeight = document.documentElement.clientHeight;
-  const pageHeight = document.documentElement.getBoundingClientRect().height;
+  const pageHeight = document.documentElement.scrollHeight;
   const heightRatio = clientHeight / pageHeight;
   const scrollY = window.scrollY;
 
@@ -66,7 +66,7 @@ const updateBar = () => {
   updateBarRequested = false;
 
   const clientHeight = document.documentElement.clientHeight;
-  const pageHeight = document.documentElement.getBoundingClientRect().height;
+  const pageHeight = document.documentElement.scrollHeight;
   const heightRatio = clientHeight / pageHeight;
 
   bar.style.top = (window.scrollY * heightRatio) + 'px';

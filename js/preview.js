@@ -5,8 +5,9 @@
 
 const PREVIEW_WIDTH = '15px';
 const FADE_OUT_DELAY = 3000;
-const FADE_OUT_STEP = 0.05;
-const FADE_OUT_INTERVAL = 1 / FADE_OUT_STEP;
+const FADE_OUT_INTERVAL = 20;
+const STRIPE_FADE_OUT_STEP = 1 / FADE_OUT_INTERVAL;
+const BAR_FADE_OUT_STEP = 0.75 / FADE_OUT_INTERVAL;
 
 const stripe = document.createElement('canvas');
 stripe.style.width = PREVIEW_WIDTH;
@@ -47,48 +48,42 @@ const updateStripe = (hlInfos) => {
   fadeOutAction.requestFadeOut();
 };
 
-const frame = document.createElement('canvas');
-frame.style.width = PREVIEW_WIDTH;
-frame.style.height = '100%';
-frame.style.display = 'block';
-frame.style.position = 'fixed';
-frame.style.zIndex = 10000;
-frame.style.top = 0;
-frame.style.bottom = 0;
-frame.style.right = 0;
-frame.style.opacity = 0.0;
-document.body.appendChild(frame);
+const bar = document.createElement('div');
+bar.style.width = PREVIEW_WIDTH;
+bar.style.height = 0;
+bar.style.display = 'block';
+bar.style.position = 'fixed';
+bar.style.background = '#ccc';
+bar.style.zIndex = 10000;
+bar.style.top = 0;
+bar.style.bottom = 0;
+bar.style.right = 0;
+bar.style.opacity = 0.0;
+document.body.appendChild(bar);
 
-const frameContext = frame.getContext('2d');
-
-let updateFrameRequested = false;
-const updateFrame = () => {
-  updateFrameRequested = false;
+let updateBarRequested = false;
+const updateBar = () => {
+  updateBarRequested = false;
 
   const clientHeight = document.documentElement.clientHeight;
   const pageHeight = document.documentElement.getBoundingClientRect().height;
   const heightRatio = clientHeight / pageHeight;
 
-  const frameTop = ((window.scrollY * heightRatio) + 0.5) | 0;
-  const frameHeight = ((clientHeight * heightRatio) + 0.5) | 0;
-
-  frame.height = clientHeight;
-  frameContext.globalAlpha = 0.75;
-  frameContext.fillStyle = '#ccc';
-  frameContext.fillRect(1, frameTop, frame.width - 2, frameHeight);
+  bar.style.top = (window.scrollY * heightRatio) + 'px';
+  bar.style.height = (clientHeight * heightRatio) + 'px';
 
   fadeOutAction.requestFadeOut();
 };
 
-const requestUpdateFrame = () => {
-  if (!updateFrameRequested) {
-    updateFrameRequested = true;
-    requestAnimationFrame(updateFrame);
+const requestUpdateBar = () => {
+  if (!updateBarRequested) {
+    updateBarRequested = true;
+    requestAnimationFrame(updateBar);
   }
 };
 
-window.addEventListener('scroll', requestUpdateFrame);
-window.addEventListener('resize', requestUpdateFrame);
+window.addEventListener('scroll', requestUpdateBar);
+window.addEventListener('resize', requestUpdateBar);
 
 const fadeOutAction = {
   requestFadeOutRequested: false,
@@ -100,7 +95,7 @@ const fadeOutAction = {
       this.requestFadeOutRequested = true;
 
       stripe.style.opacity = 1.0;
-      frame.style.opacity = 1.0;
+      bar.style.opacity = 0.75;
 
       requestAnimationFrame(this.start.bind(this));
     }
@@ -118,13 +113,13 @@ const fadeOutAction = {
     let opacity = stripe.style.opacity;
     this.fadeOutAnimation = null;
     this.fadeOutAnimation = setInterval(() => {
-      if (opacity >= FADE_OUT_STEP) {
-        opacity -= FADE_OUT_STEP;
+      if (opacity >= STRIPE_FADE_OUT_STEP) {
+        opacity -= STRIPE_FADE_OUT_STEP;
         stripe.style.opacity = opacity;
-        frame.style.opacity = opacity;
+        bar.style.opacity = bar.style.opacity - BAR_FADE_OUT_STEP;
       } else {
         stripe.style.opacity = 0;
-        frame.style.opacity = 0;
+        bar.style.opacity = 0;
         clearInterval(this.fadeOutAnimation);
       }
     }, FADE_OUT_INTERVAL);

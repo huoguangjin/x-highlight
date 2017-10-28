@@ -156,35 +156,37 @@ function highlight(container, anchorNode, anchorOffset, keyword, className) {
 function highlightNode(node, keyword, className, highlightedNodes) {
   const len = keyword.length;
   const content = node.nodeValue;
-  const contentLen = content.length;
 
-  const fragment = document.createDocumentFragment();
-
-  let curr = 0;
-  let last = 0;
-  while (curr + len <= contentLen) {
-    curr = content.indexOf(keyword, curr);
-    if (curr === -1) {
-      break; // no more match..
-    }
+  let curr = content.indexOf(keyword, 0);
+  if (curr !== -1) {
+    const fragment = document.createDocumentFragment();
 
     if (curr !== 0) {
-      const prevNode = document.createTextNode(content.slice(last, curr));
-      fragment.appendChild(prevNode);
+      fragment.appendChild(document.createTextNode(content.slice(0, curr)));
     }
 
-    last = curr + len;
-    const hlNode = document.createElement('span');
-    hlNode.className = className;
-    hlNode.innerText = content.slice(curr, last);
-    fragment.appendChild(hlNode);
-    highlightedNodes.push(hlNode);
+    let last = 0;
+    const contentLen = content.length;
+    while (curr + len <= contentLen) {
+      last = curr + len;
+      const hlNode = document.createElement('span');
+      hlNode.className = className;
+      hlNode.innerText = content.slice(curr, last);
+      fragment.appendChild(hlNode);
+      highlightedNodes.push(hlNode);
 
-    curr = last;
-  }
+      curr = content.indexOf(keyword, last);
+      if (curr === -1) {
+        break; // no more match..
+      }
 
-  if (last !== 0) {
-    fragment.appendChild(document.createTextNode(content.slice(last)));
+      fragment.appendChild(document.createTextNode(content.slice(last, curr)));
+    }
+
+    if (last !== contentLen) {
+      fragment.appendChild(document.createTextNode(content.slice(last)));
+    }
+
     node.parentNode.replaceChild(fragment, node);
   }
 }

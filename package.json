@@ -22,11 +22,14 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --devtool eval --hot --inline --colors",
-    "build": "NODE_ENV=production webpack --env production -p --colors",
+    "build": "cross-env NODE_ENV=production webpack --env production -p --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "webpack": "^3.8.1"
+    "cross-env": "^5.2.0",
+    "webpack": "^3.8.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5"
   },
   "devDependencies": {
     "babel-preset-env": "^1.6.1",
